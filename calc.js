@@ -20,7 +20,9 @@ $("table").find('td').find("button").on({
             var idOfOperator = $(this).attr('id');
             if(idOfOperator === 'equalsButton'){
                 $('#display').val(operationArray());
-            }else{
+            } else if(idOfOperator === 'clearButton'){
+                clearCalculation();
+            } else{
                 arrayOfNums.push(idOfOperator);
             }
         } else{
@@ -84,6 +86,11 @@ function decisionOperation(one, two, operation){
     } else if(operation === 'divideButton'){
         return one/two;
     }
+}
+function clearCalculation() {
+    $('#display').val(' ');
+    arrayOfNums = [];
+    displayNum = NaN;
 }
 
 function outputError(value, message = ' '){
