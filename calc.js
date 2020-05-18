@@ -4,11 +4,18 @@
 var arrayOfNums = [];
 var displayNum = NaN;
 var finalNum = NaN
+var equalBefore = false;
+
 $("table").find('td').find("button").on({
     click: function () {
+        outputError(arrayOfNums, ' at all times');
         if(!($(this).attr('value'))){
-            arrayOfNums.push(parseInt(displayNum))
             displayingOperation();
+            if(!equalBefore){
+                arrayOfNums.push(parseInt(displayNum));
+            } else{
+                equalBefore = false;
+            }
             displayNum = NaN;
             var idOfOperator = $(this).attr('id');
             if(idOfOperator === 'equalsButton'){
@@ -41,12 +48,16 @@ function operationArray() {
     var onlyNums = arrayOfNums.filter(numbersOnly);
     var onlyOperations = arrayOfNums.filter(idOnly);
     var finalResult;
+    outputError(onlyNums, ' initial array of nums');
     for(var i = 0; i<onlyOperations.length; i++){
         finalResult = decisionOperation(onlyNums[0],onlyNums[1], onlyOperations[i]);
         onlyNums.shift();
         onlyNums[0] = finalResult;
-
     }
+    arrayOfNums = [onlyNums[0]];
+    outputError(arrayOfNums, ' this is after the equal sign has been pressed');
+    displayNum = onlyNums[0];
+    equalBefore = true;
     return onlyNums[0];
 
 }
