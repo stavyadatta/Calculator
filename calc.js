@@ -5,27 +5,42 @@ var arrayOfNums = [];
 var displayNum = NaN;
 var finalNum = NaN
 var equalBefore = false;
+var operatorUsedBefore = false;
 
 $("table").find('td').find("button").on({
     click: function () {
         outputError(arrayOfNums, ' at all times');
         if(!($(this).attr('value'))){
-            displayingOperation();
+            /// this part of the code is to make sure the value the user sees is appropriate
+            if(!operatorUsedBefore) {
+                displayingOperation();
+            }
+            /// if the equals is not used before then that means the user wants results so that's why there shouldn't be
+            /// double pushing into array
             if(!equalBefore){
                 arrayOfNums.push(parseInt(displayNum));
             } else{
+                /// since no pushing the equalsbefore can be turned false
                 equalBefore = false;
             }
             displayNum = NaN;
+
             var idOfOperator = $(this).attr('id');
             if(idOfOperator === 'equalsButton'){
                 $('#display').val(operationArray());
             } else if(idOfOperator === 'clearButton'){
                 clearCalculation();
             } else{
+                outputError(equalBefore, ' Entering the else statement when the operator is pushed');
                 arrayOfNums.push(idOfOperator);
             }
         } else{
+            if(equalBefore){
+                outputError(displayNum, ' entering???');
+                displayNum = NaN;
+                arrayOfNums = [];
+                equalBefore = false;
+            }
             displaying($(this).val());
         }
     }
