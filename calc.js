@@ -1,12 +1,11 @@
-/// <reference path="../typings/globals/jquery/index.d.ts" />
-// $('#display').html('0');
-
 var arrayOfNums = [];
 var displayNum = NaN;
 var finalNum = NaN
 var equalBefore = false;
 var operatorUsedBefore = false;
 var inUseOperator;
+var counterForEqual = 0;
+var numberBeforeResult;
 
 $("table").find('td').find("button").on({
     click: function () {
@@ -22,53 +21,28 @@ $("table").find('td').find("button").on({
             }
             outputError(arrayOfNums, ' after the push');
             if(idOfOperator === 'equalsButton'){
-                $('#display').val(operationArray());
+                counterForEqual++;
+                if(counterForEqual > 1){
+                    displayNum = decisionOperation(numberBeforeResult, displayNum, inUseOperator);
+                    $('#display').val(decisionOperation(displayNum));
+                }else{
+                    $('#display').val(operationArray());
+                }
                 equalBefore = true;
-                return;
             } else if(idOfOperator === 'clearButton'){
                 equalOrClearImplementation(true);
-            }
-            if(arrayOfNums.length === 2){
-                outputError('entering the length statement');
-                $('#display').val(operationArray());
-                displayNum = NaN;
             } else {
-                outputError(displayNum, ' this is when the addition is not taking place');
-                displayNum = NaN;
+                if(arrayOfNums.length === 2){
+                    outputError('entering the length statement');
+                    $('#display').val(operationArray());
+                    displayNum = NaN;
+                } else {
+                    outputError(displayNum, ' this is when the addition is not taking place');
+                    displayNum = NaN;
+                }
+                inUseOperator = idOfOperator;
             }
-            inUseOperator = idOfOperator;
-
-            // if(!equalBefore){
-            //     arrayOfNums.push(parseInt(displayNum));
-            // } else{
-            //     /// since no pushing the equals before can be turned false
-            //     equalBefore = false;
-            // }
-            /// this part of the code is to make sure the value the user sees is appropriate
-            // if(!operatorUsedBefore){
-            //     displayingOperation();
-            //     operatorUsedBefore = true;
-            //     arrayOfNums.push(idOfOperator);
-            //     $('#display').val(operationArray());
-            // }else{
-            //     ///outputError(arrayOfNums, ' this is when the 2nd operator is inputted')
-            //     arrayOfNums.push(idOfOperator);
-            // }
-            //
-            // displayNum = NaN;
-            //
-            // if(idOfOperator === 'equalsButton'){
-            //     $('#display').val(operationArray());
-            // } else if(idOfOperator === 'clearButton'){
-            //     clearCalculation();
-            // }
         } else{
-            // if(equalBefore){
-            //     ///outputError(displayNum, ' entering???');
-            //     displayNum = NaN;
-            //     arrayOfNums = [];
-            //     equalBefore = false;
-            // }
             outputError('whenever the user enters a number');
             if(equalBefore){
                 equalOrClearImplementation();
@@ -86,6 +60,7 @@ function equalOrClearImplementation(clearDecision = false) {
     displayNum = NaN;
     arrayOfNums = [];
     inUseOperator = null;
+    counterForEqual = 0;
 }
 function displaying(value) {
     if(isNaN(displayNum)){
@@ -104,7 +79,8 @@ function operationArray() {
     outputError(arrayOfNums, ' when the operator button is hit');
     var onlyOperations = inUseOperator;
     var finalResult = decisionOperation(arrayOfNums[0], arrayOfNums[1], onlyOperations);
-    outputError(finalResult, ' this is the result of the output')
+    outputError(finalResult, ' this is the result of the output');
+    numberBeforeResult = arrayOfNums[1];
     arrayOfNums = [finalResult];
     outputError(arrayOfNums, ' this operator should now only be having one value that is 3');
     displayNum = finalResult;
@@ -136,11 +112,6 @@ function decisionOperation(one, two, operation){
     } else if(operation === 'divideButton'){
         return one/two;
     }
-}
-function clearCalculation() {
-    $('#display').val(' ');
-    arrayOfNums = [];
-    displayNum = NaN;
 }
 
 function outputError(value, message = ' '){
