@@ -3,9 +3,8 @@ var displayNum = NaN;
 var arrayOfNums = [];
 var arrayOfOperations = [];
 var arrayOfAns =[];
-var equalRepeat;
-var finalNum = NaN;
 var equalUsedBefore = false;
+var prev_num = NaN;
 
 $('table').find('td').find('button').on({
     click: function () {
@@ -20,29 +19,38 @@ $('table').find('td').find('button').on({
             arrayOfNums.push(Number(displayNum));
 
             // when equals is hit
+            if(idOfOperations === 'clearButton'){
+                equalOrClearImplementation(true);
+            }
             if(idOfOperations === 'equalsButton'){
-                outputError(arrayOfNums[arrayOfNums.length - 2], ' this is the 1st number');
-                outputError(arrayOfNums[arrayOfNums.length - 1], ' this is the 2nd number');
-                outputError(arrayOfOperations[arrayOfOperations.length - 1], ' this is the operations');
-                var equalResult = decisionOperation(arrayOfNums[arrayOfNums.length - 2],
-                    arrayOfOperations[arrayOfOperations.length - 1], arrayOfNums[arrayOfNums.length - 1]);
-                $('#display').val(equalResult);
-                arrayOfNums = [equalResult];
-                equalUsedBefore = true;
-                displayNum = NaN;
+                if(!equalUsedBefore) {
+                    outputError(arrayOfNums[arrayOfNums.length - 2], ' this is the 1st number ');
+                    outputError(arrayOfNums[arrayOfNums.length - 1], ' this is the 2nd number');
+                    outputError(arrayOfOperations[arrayOfOperations.length - 1], ' this is the operations');
+                    prev_num = arrayOfNums[arrayOfNums.length - 1];
+                    var equalResult = decisionOperation(arrayOfNums[arrayOfNums.length - 2],
+                        arrayOfOperations[arrayOfOperations.length - 1], arrayOfNums[arrayOfNums.length - 1]);
+                    $('#display').val(equalResult);
+                    arrayOfNums = [equalResult];
+                    equalUsedBefore = true;
+                    displayNum = NaN;
+                } else{
+                    outputError(prev_num, ' this is the previous num');
+                    outputError(arrayOfNums[arrayOfNums.length - 2], ' this is the number in the array');
+                    var multiEqual = decisionOperation(arrayOfNums[arrayOfNums.length - 2],
+                        arrayOfOperations[arrayOfOperations.length - 1], prev_num);
+                    $('#display').val(multiEqual);
+                    arrayOfNums = [multiEqual];
+                }
                 return;
             }
             // to make sure the numbers are moving when being operated
             if(arrayOfNums.length > 1){
-                outputError(arrayOfNums, ' this is the array of nums');
-                outputError(arrayOfOperations, ' this is the array of operations');
                 var result = decisionOperation(arrayOfNums[arrayOfNums.length - 2],
                     arrayOfOperations[arrayOfOperations.length - 2], arrayOfNums[arrayOfNums.length - 1]);
                 $('#display').val(result);
                 arrayOfNums.push(result);
             } else {
-                outputError(arrayOfNums, ' this is the array of nums in the else statement');
-                outputError(arrayOfOperations, ' this is the array of operations the else statement');
                 $('#display').val(decisionOperation(arrayOfNums[0]), arrayOfOperations[0]);
             }
             displayNum = NaN;
@@ -64,17 +72,15 @@ function equalOrClearImplementation(clearDecision = false) {
     arrayOfNums = [];
     arrayOfOperations = [];
     arrayOfAns = [];
-    inUseOperator = null;
-    counterForEqual = 0;
 }
 
 function decisionOperation(one, operation, two = NaN){
+    outputError(one, ' this is the 1st number undee the decision operation');
+    outputError(operation, ' this is the operation  undee the decision operation');
+    outputError(two, ' this is the 2nd number  undee the decision operation');
     if(isNaN(two)){
         return one;
     }
-    outputError(one, ' this is the 1st number');
-    outputError(two, ' this is the 2nd number');
-    outputError( operation, ' ths is the operation');
     if(operation === 'addButton'){
         return one + two;
     } else if(operation === 'subtractButton'){
