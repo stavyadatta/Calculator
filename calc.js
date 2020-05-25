@@ -4,31 +4,32 @@ var arrayOfNums = [];
 var arrayOfOperations = [];
 var arrayOfAns =[];
 var equalRepeat;
+var finalNum = NaN;
+var equalUsedBefore = false;
 
 $('table').find('td').find('button').on({
     click: function () {
         if(!($(this).attr('value'))){
             // when the operator is pushed the displayNum should be added to the array
-            arrayOfNums.push(Number(displayNum));
             var idOfOperations = $(this).attr('id');
             // also the operator
-            if(idOfOperations !== 'equalButton'){
+            if(idOfOperations !== 'equalsButton'){
                 arrayOfOperations.push(idOfOperations);
+                equalUsedBefore = false;
             }
+            arrayOfNums.push(Number(displayNum));
+
             // when equals is hit
             if(idOfOperations === 'equalsButton'){
-                if(!equalRepeat) {
-                    var equalTo = decisionOperation(arrayOfNums[arrayOfNums.length - 2],
-                        arrayOfOperations[arrayOfOperations.length - 2], arrayOfNums[arrayOfNums.length - 1]);
-                    $('#display').val(equalTo);
-                    arrayOfAns.push(equalTo);
-                    arrayOfNums.push(equalTo);
-                } else {
-                    var equalTo = decisionOperation(arrayOfNums[arrayOfNums.length - 2],
-                        arrayOfOperations[arrayOfOperations.length - 2], arrayOfAns[arrayOfAns.length - 1]);
-                    $('#display').val(equalTo);
-                    arrayOfAns.push(equalTo)
-                }
+                outputError(arrayOfNums[arrayOfNums.length - 2], ' this is the 1st number');
+                outputError(arrayOfNums[arrayOfNums.length - 1], ' this is the 2nd number');
+                outputError(arrayOfOperations[arrayOfOperations.length - 1], ' this is the operations');
+                var equalResult = decisionOperation(arrayOfNums[arrayOfNums.length - 2],
+                    arrayOfOperations[arrayOfOperations.length - 1], arrayOfNums[arrayOfNums.length - 1]);
+                $('#display').val(equalResult);
+                arrayOfNums = [equalResult];
+                equalUsedBefore = true;
+                displayNum = NaN;
                 return;
             }
             // to make sure the numbers are moving when being operated
@@ -39,7 +40,6 @@ $('table').find('td').find('button').on({
                     arrayOfOperations[arrayOfOperations.length - 2], arrayOfNums[arrayOfNums.length - 1]);
                 $('#display').val(result);
                 arrayOfNums.push(result);
-
             } else {
                 outputError(arrayOfNums, ' this is the array of nums in the else statement');
                 outputError(arrayOfOperations, ' this is the array of operations the else statement');
@@ -47,15 +47,34 @@ $('table').find('td').find('button').on({
             }
             displayNum = NaN;
         }else{
+            if(equalUsedBefore){
+                equalOrClearImplementation();
+                equalUsedBefore = false;
+            }
             displaying($(this).val());
         }
     }
 });
 
+function equalOrClearImplementation(clearDecision = false) {
+    if(clearDecision){
+        $('#display').val(' ');
+    }
+    displayNum = NaN;
+    arrayOfNums = [];
+    arrayOfOperations = [];
+    arrayOfAns = [];
+    inUseOperator = null;
+    counterForEqual = 0;
+}
+
 function decisionOperation(one, operation, two = NaN){
     if(isNaN(two)){
         return one;
     }
+    outputError(one, ' this is the 1st number');
+    outputError(two, ' this is the 2nd number');
+    outputError( operation, ' ths is the operation');
     if(operation === 'addButton'){
         return one + two;
     } else if(operation === 'subtractButton'){
